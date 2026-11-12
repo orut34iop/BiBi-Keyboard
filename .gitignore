@@ -10,6 +10,7 @@ local.properties
 .idea
 
 AGENTS.md 
+!/AGENTS.md
 CLAUDE.md
 CONTEXT.md
 .agents/

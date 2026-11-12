@@ -64,17 +64,9 @@ internal fun buildAboutInfo(context: Context): AboutInfo {
         null
     }
     val versionName = pInfo?.versionName ?: ""
-    val versionCodeLong = if (pInfo == null) {
-        0L
-    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-        pInfo.longVersionCode
-    } else {
-        @Suppress("DEPRECATION")
-        pInfo.versionCode.toLong()
-    }
     return AboutInfo(
         appName = context.getString(R.string.about_app_name, context.getString(R.string.app_name)),
-        version = context.getString(R.string.about_version, "$versionName ($versionCodeLong)"),
+        version = context.getString(R.string.about_version, versionName),
         packageName = context.getString(R.string.about_package, context.packageName)
     )
 }

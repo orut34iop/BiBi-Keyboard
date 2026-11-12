@@ -6,6 +6,7 @@ on:
     paths:
       - "app/build.gradle"
       - "app/build.gradle.kts"
+      - "app/version.properties"
       - "gradle.properties"
       - "app/src/main/AndroidManifest.xml"
   workflow_dispatch:
@@ -67,7 +68,7 @@ jobs:
                   return None, None
               vn = None
               vc = None
-              m = re.search(r'versionName\s*[= ]\s*"?([0-9A-Za-z\.-_\+]+)"?', text)
+              m = re.search(r'versionName\s*[= ]\s*"?([0-9A-Za-z._+-]+)"?', text)
               if m:
                   vn = m.group(1)
               m = re.search(r'versionCode\s*[= ]\s*"?([0-9]+)"?', text)
@@ -100,7 +101,7 @@ jobs:
               except subprocess.CalledProcessError:
                   return None
 
-          paths = ['app/build.gradle', 'app/build.gradle.kts', 'gradle.properties', 'app/src/main/AndroidManifest.xml']
+          paths = ['app/version.properties', 'app/build.gradle', 'app/build.gradle.kts', 'gradle.properties', 'app/src/main/AndroidManifest.xml']
 
           text_head = None
           for p in paths:
@@ -279,6 +280,8 @@ jobs:
           SF_FREE_API_KEY: ${{ secrets.SF_FREE_API_KEY }}
           POCKETBASE_BASE_URL: ${{ secrets.POCKETBASE_BASE_URL || vars.POCKETBASE_BASE_URL }}
           VERSION: ${{ steps.version.outputs.version_name }}
+          BIBI_BUILD_VERSION_NAME: ${{ steps.version.outputs.version_name }}
+          BIBI_BUILD_VERSION_CODE: ${{ steps.version.outputs.version_code }}
         run: |
           # APK 资产命名须与 app/.../ui/update/UpdateApkNaming.kt 首选项一致
           echo "使用签名密钥分 ABI 构建 Release APK..."
@@ -302,6 +305,8 @@ jobs:
           SF_FREE_API_KEY: ${{ secrets.SF_FREE_API_KEY }}
           POCKETBASE_BASE_URL: ${{ secrets.POCKETBASE_BASE_URL || vars.POCKETBASE_BASE_URL }}
           VERSION: ${{ steps.version.outputs.version_name }}
+          BIBI_BUILD_VERSION_NAME: ${{ steps.version.outputs.version_name }}
+          BIBI_BUILD_VERSION_CODE: ${{ steps.version.outputs.version_code }}
         run: |
           # APK 资产命名须与 app/.../ui/update/UpdateApkNaming.kt 当前前缀一致（debug 变体）
           echo "未配置签名密钥,分 ABI 构建 Debug APK..."

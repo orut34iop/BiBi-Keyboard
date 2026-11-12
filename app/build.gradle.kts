@@ -1,7 +1,64 @@
+import java.nio.channels.FileChannel
+import java.nio.file.StandardOpenOption
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.plugin.compose") version "2.3.21"
     id("org.jetbrains.kotlin.plugin.serialization") version "2.3.21"
+}
+
+// Allocate once per packaging invocation, independently of clean/build output caches.
+val packagingTaskPattern = Regex("^(assemble|bundle|package|install)([A-Z].*)?$|^build(Needed|Dependents)?$")
+val packagingRequested = gradle.startParameter.taskNames.any {
+    packagingTaskPattern.matches(it.substringAfterLast(':'))
+}
+val buildVersionFile = file("version.properties")
+val versionLockFile = rootProject.file(".gradle/bibi-version.lock").apply { parentFile.mkdirs() }
+val buildVersion = FileChannel.open(
+    versionLockFile.toPath(),
+    StandardOpenOption.CREATE,
+    StandardOpenOption.WRITE
+).use { channel ->
+    channel.lock().use {
+        val values = Properties().apply { buildVersionFile.inputStream().use(::load) }
+        val pinnedCode = providers.environmentVariable("BIBI_BUILD_VERSION_CODE").orNull
+        val pinnedName = providers.environmentVariable("BIBI_BUILD_VERSION_NAME").orNull
+        require((pinnedCode == null) == (pinnedName == null)) {
+            "BIBI_BUILD_VERSION_CODE and BIBI_BUILD_VERSION_NAME must be supplied together."
+        }
+        if (pinnedCode != null && pinnedName != null) {
+            require(pinnedCode.toInt() > 0 && pinnedName.startsWith("${values.getProperty("baseVersion")}.$pinnedCode-")) {
+                "Pinned build version does not match the base version and build number."
+            }
+            values.setProperty("versionCode", pinnedCode)
+            values.setProperty("versionName", pinnedName)
+        } else if (packagingRequested && !gradle.startParameter.isDryRun) {
+            val nextCode = Math.addExact(values.getProperty("versionCode").toInt(), 1)
+            val timestamp = ZonedDateTime.now(ZoneId.of("Asia/Shanghai"))
+                .format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmm"))
+            val nextName = "${values.getProperty("baseVersion")}.$nextCode-$timestamp"
+            values.setProperty("versionCode", nextCode.toString())
+            values.setProperty("versionName", nextName)
+            values.setProperty("buildTimestamp", timestamp)
+            buildVersionFile.writeText(
+                "baseVersion=${values.getProperty("baseVersion")}\n" +
+                    "versionCode=$nextCode\nversionName=$nextName\nbuildTimestamp=$timestamp\n"
+            )
+            logger.lifecycle("Allocated build version: $nextName ($nextCode)")
+        }
+        values
+    }
+}
+
+// A packaging invocation must configure again to allocate its own version.
+tasks.configureEach {
+    if (packagingTaskPattern.matches(name)) {
+        notCompatibleWithConfigurationCache("Each package build allocates a new version number and timestamp.")
+    }
 }
 
 val packagedAbiFilters = (findProperty("abiFilters") as String?)
@@ -28,8 +85,8 @@ android {
         applicationId = "com.brycewg.asrkb"
         minSdk = 26
         targetSdk = 36
-        versionCode = 180
-        versionName = "4.6.0"
+        versionCode = buildVersion.getProperty("versionCode").toInt()
+        versionName = buildVersion.getProperty("versionName")
 
         // 默认仅构建 arm64-v8a 以减小包体体积；CI 可通过 -PabiFilters=armeabi-v7a 单独出包。
         ndk {
