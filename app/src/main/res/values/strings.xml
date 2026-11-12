@@ -2,7 +2,7 @@
   <!-- ============================================== -->
   <!-- Basic Information -->
   <!-- ============================================== -->
-  <string name="app_name">BiBi Keyboard</string>
+  <string name="app_name">WIZ</string>
   <string name="fxliang_fcitx_voice_input_provider_label">BiBi Keyboard Link</string>
   <!-- PocketBase 统计服务地址（渠道可覆盖）；为空则不上报 -->
   <string name="pocketbase_base_url" translatable="false"></string>
