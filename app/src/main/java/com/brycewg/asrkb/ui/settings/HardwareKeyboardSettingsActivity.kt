@@ -1,6 +1,9 @@
 package com.brycewg.asrkb.ui.settings
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.view.InputDevice
 import android.view.KeyEvent
 import androidx.activity.compose.setContent
@@ -41,6 +44,7 @@ class HardwareKeyboardSettingsActivity : BaseActivity() {
     private var events by mutableStateOf<List<CapturedHardwareKey>>(emptyList())
     private var binding by mutableStateOf("")
     private var devices by mutableStateOf("")
+    private var overlayPermissionGranted by mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,6 +61,7 @@ class HardwareKeyboardSettingsActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
         refreshDevices()
+        overlayPermissionGranted = Settings.canDrawOverlays(this)
     }
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
@@ -158,6 +163,30 @@ class HardwareKeyboardSettingsActivity : BaseActivity() {
                 }
                 item("limitations") {
                     Text(stringResource(R.string.hardware_keyboard_system_key_note), style = MaterialTheme.typography.bodySmall)
+                }
+                item("recording_animation") {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text(stringResource(R.string.hardware_keyboard_animation_description))
+                        SettingsActionButton(
+                            uiMode = uiMode,
+                            text = stringResource(
+                                if (overlayPermissionGranted) {
+                                    R.string.hardware_keyboard_animation_permission_granted
+                                } else {
+                                    R.string.hardware_keyboard_animation_permission_action
+                                }
+                            ),
+                            enabled = !overlayPermissionGranted,
+                            onClick = {
+                                startActivity(
+                                    Intent(
+                                        Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                        Uri.parse("package:$packageName")
+                                    )
+                                )
+                            }
+                        )
+                    }
                 }
                 item("log_title") {
                     Text(stringResource(R.string.hardware_keyboard_event_log), style = MaterialTheme.typography.titleMedium)

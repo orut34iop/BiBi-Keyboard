@@ -578,4 +578,8 @@
   <string name="hardware_keyboard_bind_key">Use this key for voice input</string>
   <string name="hardware_keyboard_system_key_note">Only key events delivered by Android can be detected. If other keys appear but AI does not, or AI opens the system assistant, the system or keyboard firmware may handle it first; a normal app cannot guarantee remapping it. You may need to change the AI key action in system keyboard settings. After binding a normal key, its original input is replaced while BiBi is active. Bound Ctrl/Shift/Alt keys trigger on release when pressed alone.</string>
   <string name="hardware_keyboard_event_log">Recent key events (newest first)</string>
+  <string name="hardware_keyboard_animation_description">Keyboard voice input shows the same animated ribbon as the floating ball. Press again to stop recording and dismiss the animation. Allow display over other apps to see it when the keyboard panel is hidden.</string>
+  <string name="hardware_keyboard_animation_permission_action">Allow recording animation over other apps</string>
+  <string name="hardware_keyboard_animation_permission_granted">Recording animation permission granted</string>
+  <string name="hardware_keyboard_animation_permission_hint">Recording started. To see its animation with the keyboard panel hidden, allow display over other apps in Keyboard keys and voice shortcut.</string>
 </resources>

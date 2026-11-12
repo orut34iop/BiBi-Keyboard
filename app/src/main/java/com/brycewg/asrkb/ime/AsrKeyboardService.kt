@@ -15,6 +15,7 @@ import android.view.ContextThemeWrapper
 import android.view.InputDevice
 import android.view.KeyEvent
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.PopupMenu
@@ -37,6 +38,7 @@ import com.brycewg.asrkb.store.Prefs
 import com.brycewg.asrkb.store.debug.DebugLogManager
 import com.brycewg.asrkb.ui.AsrVendorUi
 import com.brycewg.asrkb.ui.SettingsActivity
+import com.brycewg.asrkb.ui.floatingball.KeyboardRecordingOverlay
 import com.brycewg.asrkb.util.HapticFeedbackHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -132,6 +134,8 @@ class AsrKeyboardService :
     private var micGestureController: MicGestureController? = null
     private var imeViewVisible: Boolean = false
     private val hardwareVoiceShortcut = HardwareVoiceShortcut()
+    private lateinit var keyboardRecordingOverlay: KeyboardRecordingOverlay
+    private lateinit var hardwareVoiceFeedback: HardwareVoiceRecordingFeedback
 
     private val isAiEditPanelVisible: Boolean
         get() = aiEditPanelController?.isVisible == true
@@ -157,6 +161,23 @@ class AsrKeyboardService :
     override fun onCreate() {
         super.onCreate()
         prefs = Prefs(this)
+        keyboardRecordingOverlay = KeyboardRecordingOverlay(
+            context = this,
+            prefs = prefs,
+            imeDecor = { if (imeViewVisible) window?.window?.decorView as? ViewGroup else null },
+            onMissingOverlayPermission = {
+                android.widget.Toast.makeText(
+                    this,
+                    R.string.hardware_keyboard_animation_permission_hint,
+                    android.widget.Toast.LENGTH_LONG
+                ).show()
+            }
+        )
+        hardwareVoiceFeedback = HardwareVoiceRecordingFeedback(
+            show = keyboardRecordingOverlay::show,
+            hide = keyboardRecordingOverlay::hide,
+            amplitude = keyboardRecordingOverlay::updateAmplitude
+        )
         themeStyler = ImeThemeStyler(prefs)
         layoutController = ImeLayoutController(
             prefs = prefs,
@@ -223,6 +244,8 @@ class AsrKeyboardService :
     }
 
     override fun onDestroy() {
+        hardwareVoiceFeedback.clear()
+        keyboardRecordingOverlay.dispose()
         ClipboardSyncRuntimeService.setUiListener(null)
         super.onDestroy()
         ContinuousCaptureCoordinator.release(ContinuousCaptureOwner.Ime)
@@ -366,6 +389,7 @@ class AsrKeyboardService :
         uiRenderer?.render(actionHandler.getCurrentState())
         // 若上次写入失效、结果仍待用户主动复制，重新显示时恢复该动作。
         actionHandler.restorePendingCopyResultIfAny()
+        hardwareVoiceFeedback.onStateChanged(actionHandler.getCurrentState())
 
         // 自动启动录音（如果开启了设置）
         if (prefs.autoStartRecordingOnShow) {
@@ -412,6 +436,8 @@ class AsrKeyboardService :
 
     override fun onFinishInputView(finishingInput: Boolean) {
         imeViewVisible = false
+        hardwareVoiceFeedback.clear()
+        keyboardRecordingOverlay.dispose()
         layoutController?.onInputViewFinished()
         stopImeRecordingIfRunning()
         actionHandler.onInputViewHidden()
@@ -486,7 +512,10 @@ class AsrKeyboardService :
         ) {
             // 识别/润色期间忽略额外按键，不复用麦克风点击的「强制取消」行为。
             when (actionHandler.getCurrentState()) {
-                KeyboardState.Idle -> if (checkAsrReady()) actionHandler.handleMicTapToggle()
+                KeyboardState.Idle -> if (checkAsrReady()) {
+                    hardwareVoiceFeedback.prepareForRecording()
+                    actionHandler.handleMicTapToggle()
+                }
                 is KeyboardState.Listening -> actionHandler.handleMicTapToggle()
                 else -> Unit
             }
@@ -506,6 +535,10 @@ class AsrKeyboardService :
 
     override fun onStartInput(attribute: EditorInfo?, restarting: Boolean) {
         super.onStartInput(attribute, restarting)
+        if (!restarting) {
+            hardwareVoiceFeedback.clear()
+            keyboardRecordingOverlay.dispose()
+        }
         inputHelper.diagHostPkg = attribute?.packageName.orEmpty()
         val ic = currentInputConnection
         // 同一输入框被宿主重启时保留预览归属，避免按已含 composing 的光标文本重采锚点。
@@ -534,6 +567,7 @@ class AsrKeyboardService :
     // ========== KeyboardActionHandler.UiListener 实现 ==========
 
     override fun onStateChanged(state: KeyboardState) {
+        hardwareVoiceFeedback.onStateChanged(state)
         uiRenderer?.render(state)
     }
 
@@ -546,6 +580,7 @@ class AsrKeyboardService :
     }
 
     override fun onAmplitude(amplitude: Float) {
+        hardwareVoiceFeedback.onAmplitude(amplitude)
         viewRefs?.waveformView?.updateAmplitude(amplitude)
     }
 
@@ -563,6 +598,8 @@ class AsrKeyboardService :
 
     override fun onFinishInput() {
         hardwareVoiceShortcut.reset()
+        hardwareVoiceFeedback.clear()
+        keyboardRecordingOverlay.dispose()
         // 外接键盘可在输入视图未显示时录音，此时不会收到 onFinishInputView。
         stopImeRecordingIfRunning()
         actionHandler.onInputViewHidden()

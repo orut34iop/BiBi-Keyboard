@@ -576,4 +576,8 @@
   <string name="hardware_keyboard_bind_key">將此鍵設為語音輸入鍵</string>
   <string name="hardware_keyboard_system_key_note">只能偵測 Android 實際傳給應用程式的按鍵事件。如果其他鍵有紀錄，但 AI 鍵沒有紀錄或直接開啟系統助理，該鍵可能由系統或鍵盤韌體優先處理，一般應用程式無法保證改綁，可能需先在系統鍵盤設定中修改 AI 鍵用途。一般按鍵綁定後，在本輸入法運作時會取代原本的輸入功能。綁定 Ctrl、Shift、Alt 等修飾鍵時，單獨按下並放開才觸發。</string>
   <string name="hardware_keyboard_event_log">最近按鍵事件（最新在前）</string>
+  <string name="hardware_keyboard_animation_description">使用鍵盤快捷鍵錄音時，顯示與懸浮球相同的流光波形；再次按鍵停止錄音並收起動畫。允許顯示於其他應用程式上層後，鍵盤面板收起時也能看到動畫。</string>
+  <string name="hardware_keyboard_animation_permission_action">允許錄音動畫顯示於其他應用程式上層</string>
+  <string name="hardware_keyboard_animation_permission_granted">已允許顯示錄音動畫</string>
+  <string name="hardware_keyboard_animation_permission_hint">已開始錄音。如需在鍵盤面板收起時顯示動畫，請至「鍵盤按鍵偵測與語音快捷鍵」允許顯示於其他應用程式上層。</string>
 </resources>
