@@ -97,6 +97,18 @@ internal fun InputSettingsRouteContent(
         contentPadding = SettingsLayoutMetrics.pageContentPadding(innerPadding),
         verticalArrangement = Arrangement.spacedBy(SettingsLayoutMetrics.SectionSpacing)
     ) {
+        item("hardware_voice_shortcut") {
+            InputSection(uiMode = uiMode, titleRes = R.string.section_hardware_keyboard) {
+                SettingsPreference(
+                    entry = SettingsEntry.Action(
+                        id = "hardware_voice_shortcut",
+                        titleRes = R.string.label_hardware_voice_shortcut,
+                        summaryRes = R.string.summary_hardware_voice_shortcut,
+                        onClick = actions::openHardwareKeyboardSettings
+                    )
+                )
+            }
+        }
         item("behavior") {
             InputSection(uiMode = uiMode, titleRes = R.string.section_input_behavior) {
                 InputExplainedSwitch(

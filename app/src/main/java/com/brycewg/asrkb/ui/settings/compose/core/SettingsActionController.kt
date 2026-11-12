@@ -16,6 +16,7 @@ import com.brycewg.asrkb.asr.LlmVendor
 import com.brycewg.asrkb.store.Prefs
 import com.brycewg.asrkb.store.debug.DebugLogManager
 import com.brycewg.asrkb.ui.SettingsActivity
+import com.brycewg.asrkb.ui.settings.HardwareKeyboardSettingsActivity
 import com.brycewg.asrkb.ui.settings.search.SettingsSearchEntry
 import com.brycewg.asrkb.ui.setup.OnboardingGuideActivity
 
@@ -49,6 +50,10 @@ class SettingsActionController(
 
     fun openOnboardingGuide() {
         activity.startActivity(Intent(activity, OnboardingGuideActivity::class.java))
+    }
+
+    fun openHardwareKeyboardSettings() {
+        activity.startActivity(Intent(activity, HardwareKeyboardSettingsActivity::class.java))
     }
 
     fun applySearchEntry(entry: SettingsSearchEntry) {

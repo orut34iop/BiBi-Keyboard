@@ -560,4 +560,22 @@
   <string name="option_vad_sensitivity_high">High</string>
   <string name="option_vad_sensitivity_standard">Standard</string>
   <string name="option_vad_sensitivity_low">Low</string>
+  <string name="section_hardware_keyboard">External keyboard</string>
+  <string name="label_hardware_voice_shortcut">Voice input shortcut</string>
+  <string name="summary_hardware_voice_shortcut">Detect a key on your Bluetooth or USB keyboard and bind it to start/stop voice input.</string>
+  <string name="hardware_voice_shortcut_disabled">Not bound (disabled)</string>
+  <string name="title_hardware_keyboard_settings">Keyboard keys and voice shortcut</string>
+  <string name="hardware_keyboard_home_summary">Detect and bind the AI key or any available external keyboard key</string>
+  <string name="hardware_keyboard_capture_instructions">Connect your keyboard, then press its AI key. The detected key and codes appear below. Tap “Use this key for voice input” to save it. With BiBi selected and a text field focused, press the key once to record and again to stop and transcribe. Holding it does not repeat; extra presses during recognition are ignored.</string>
+  <string name="hardware_keyboard_devices">Connected keyboards: %1$s</string>
+  <string name="hardware_keyboard_no_device">None detected; connect your keyboard and reopen this page.</string>
+  <string name="hardware_keyboard_current_binding">Voice shortcut: %1$s</string>
+  <string name="hardware_keyboard_pause_capture">Pause detection</string>
+  <string name="hardware_keyboard_start_capture">Detect keys</string>
+  <string name="hardware_keyboard_clear_binding">Remove binding</string>
+  <string name="hardware_keyboard_detected_key">Detected key: %1$s</string>
+  <string name="hardware_keyboard_waiting_for_key">Waiting for the AI key or another key…</string>
+  <string name="hardware_keyboard_bind_key">Use this key for voice input</string>
+  <string name="hardware_keyboard_system_key_note">Only key events delivered by Android can be detected. If other keys appear but AI does not, or AI opens the system assistant, the system or keyboard firmware may handle it first; a normal app cannot guarantee remapping it. You may need to change the AI key action in system keyboard settings. After binding a normal key, its original input is replaced while BiBi is active. Bound Ctrl/Shift/Alt keys trigger on release when pressed alone.</string>
+  <string name="hardware_keyboard_event_log">Recent key events (newest first)</string>
 </resources>

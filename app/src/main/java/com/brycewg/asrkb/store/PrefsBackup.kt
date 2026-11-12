@@ -34,6 +34,9 @@ internal object PrefsBackup {
         o.put(KEY_HAPTIC_FEEDBACK_LEVEL, hapticFeedbackLevel)
         o.put(KEY_MIC_HAPTIC_ENABLED, micHapticEnabled)
         o.put(KEY_MIC_TAP_TOGGLE_ENABLED, micTapToggleEnabled)
+        o.put(KEY_HARDWARE_VOICE_KEY_CODE, hardwareVoiceKeyCode)
+        o.put(KEY_HARDWARE_VOICE_SCAN_CODE, hardwareVoiceScanCode)
+        o.put(KEY_HARDWARE_VOICE_META_STATE, hardwareVoiceMetaState)
         o.put(KEY_AUTO_START_RECORDING_ON_SHOW, autoStartRecordingOnShow)
         o.put(KEY_AUTO_ENTER_AFTER_ASR, autoEnterAfterAsrEnabled)
         o.put(KEY_AUTO_SWITCH_IME_AFTER_ASR, autoSwitchImeAfterAsrEnabled)
@@ -345,6 +348,9 @@ internal object PrefsBackup {
                 optBool(KEY_MIC_HAPTIC_ENABLED)?.let { micHapticEnabled = it }
             }
             optBool(KEY_MIC_TAP_TOGGLE_ENABLED)?.let { micTapToggleEnabled = it }
+            optInt(KEY_HARDWARE_VOICE_KEY_CODE)?.let { hardwareVoiceKeyCode = it }
+            optInt(KEY_HARDWARE_VOICE_SCAN_CODE)?.let { hardwareVoiceScanCode = it }
+            optInt(KEY_HARDWARE_VOICE_META_STATE)?.let { hardwareVoiceMetaState = it }
             optBool(KEY_AUTO_START_RECORDING_ON_SHOW)?.let { autoStartRecordingOnShow = it }
             optBool(KEY_AUTO_ENTER_AFTER_ASR)?.let { autoEnterAfterAsrEnabled = it }
             optBool(KEY_AUTO_SWITCH_IME_AFTER_ASR)?.let { autoSwitchImeAfterAsrEnabled = it }

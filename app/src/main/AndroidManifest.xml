@@ -99,6 +99,10 @@
 
         <!-- 外部兼容跳转页 -->
         <activity
+            android:name=".ui.settings.HardwareKeyboardSettingsActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".ui.settings.asr.AsrRecognitionSettingsActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize" />

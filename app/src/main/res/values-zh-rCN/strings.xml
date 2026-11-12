@@ -558,4 +558,22 @@
   <string name="option_vad_sensitivity_high">高</string>
   <string name="option_vad_sensitivity_standard">标准</string>
   <string name="option_vad_sensitivity_low">低</string>
+  <string name="section_hardware_keyboard">外接键盘</string>
+  <string name="label_hardware_voice_shortcut">语音输入快捷键</string>
+  <string name="summary_hardware_voice_shortcut">检测蓝牙或 USB 键盘的按键，绑定为语音输入启停键。</string>
+  <string name="hardware_voice_shortcut_disabled">未绑定（已关闭）</string>
+  <string name="title_hardware_keyboard_settings">键盘按键检测与语音快捷键</string>
+  <string name="hardware_keyboard_home_summary">检测并绑定 AI 键或其他可用的外接键盘按键</string>
+  <string name="hardware_keyboard_capture_instructions">连接键盘后，按下键盘上的 AI 键，下方将显示检测到的按键和编码。点击“将此键设为语音输入键”即可保存。选中本输入法并聚焦输入框后，按一次开始录音，再按一次停止并识别。长按不会重复触发，识别期间多按不会取消结果。</string>
+  <string name="hardware_keyboard_devices">已连接键盘：%1$s</string>
+  <string name="hardware_keyboard_no_device">未检测到，请连接键盘后重新打开此页面。</string>
+  <string name="hardware_keyboard_current_binding">当前语音快捷键：%1$s</string>
+  <string name="hardware_keyboard_pause_capture">暂停检测</string>
+  <string name="hardware_keyboard_start_capture">开始检测</string>
+  <string name="hardware_keyboard_clear_binding">解除绑定</string>
+  <string name="hardware_keyboard_detected_key">检测到按键：%1$s</string>
+  <string name="hardware_keyboard_waiting_for_key">等待按下 AI 键或其他按键…</string>
+  <string name="hardware_keyboard_bind_key">将此键设为语音输入键</string>
+  <string name="hardware_keyboard_system_key_note">只能检测 Android 实际传给应用的按键事件。如果其他键有记录，但 AI 键没有记录或直接打开系统助手，说明该键可能被系统或键盘固件优先处理，普通应用无法保证改绑；可能需要先在系统键盘设置中修改 AI 键用途。普通按键绑定后，在本输入法工作时会替代原有输入功能。绑定 Ctrl、Shift、Alt 等修饰键时，单独按下并松开才触发。</string>
+  <string name="hardware_keyboard_event_log">最近按键事件（最新在前）</string>
 </resources>

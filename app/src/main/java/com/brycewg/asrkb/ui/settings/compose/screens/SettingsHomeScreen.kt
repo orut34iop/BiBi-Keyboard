@@ -414,6 +414,13 @@ private fun inputSections(
                 onClick = { onPushRoute(BibiSettingsRoute.Input) }
             ),
             SettingsEntry.Action(
+                id = "hardware_voice_shortcut",
+                titleRes = R.string.title_hardware_keyboard_settings,
+                summaryRes = R.string.hardware_keyboard_home_summary,
+                icon = Icons.Rounded.Keyboard,
+                onClick = actions::openHardwareKeyboardSettings
+            ),
+            SettingsEntry.Action(
                 id = "ui_settings",
                 titleRes = R.string.section_ui_settings,
                 icon = Icons.Rounded.Dashboard,

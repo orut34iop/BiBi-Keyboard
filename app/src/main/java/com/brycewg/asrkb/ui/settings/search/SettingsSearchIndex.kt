@@ -124,6 +124,7 @@ object SettingsSearchIndex {
         }
         item(R.string.label_trim_trailing_punct, R.string.section_input_behavior)
         item(R.string.label_mic_tap_toggle, R.string.section_input_behavior)
+        item(R.string.label_hardware_voice_shortcut, R.string.section_hardware_keyboard, "F8", "蓝牙", "实体键盘", "快捷键", "Bluetooth", "shortcut")
         item(R.string.label_auto_start_recording_on_show, R.string.section_input_behavior)
         item(R.string.label_continuous_capture, R.string.section_input_behavior)
         item(

@@ -12,6 +12,7 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.inputmethodservice.InputMethodService
 import android.view.ContextThemeWrapper
+import android.view.InputDevice
 import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -130,6 +131,7 @@ class AsrKeyboardService :
     private var asrHistoryPanelController: AsrHistoryPanelController? = null
     private var micGestureController: MicGestureController? = null
     private var imeViewVisible: Boolean = false
+    private val hardwareVoiceShortcut = HardwareVoiceShortcut()
 
     private val isAiEditPanelVisible: Boolean
         get() = aiEditPanelController?.isVisible == true
@@ -453,6 +455,7 @@ class AsrKeyboardService :
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (handleHardwareVoiceKey(event)) return true
         // 实体/导航返回：在仍显示时交接，避免「先收起再切换」导致目标面板不出现
         if (keyCode == KeyEvent.KEYCODE_BACK && event?.repeatCount == 0) {
             if (isInputViewShown || imeViewVisible) {
@@ -462,6 +465,32 @@ class AsrKeyboardService :
             }
         }
         return super.onKeyDown(keyCode, event)
+    }
+
+    override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
+        if (handleHardwareVoiceKey(event)) return true
+        return super.onKeyUp(keyCode, event)
+    }
+
+    private fun handleHardwareVoiceKey(event: KeyEvent?): Boolean {
+        if (event == null) return false
+        val device = event.device
+        return hardwareVoiceShortcut.onKeyEvent(
+            event = event,
+            configuredKeyCode = prefs.hardwareVoiceKeyCode,
+            configuredScanCode = prefs.hardwareVoiceScanCode,
+            configuredMetaState = prefs.hardwareVoiceMetaState,
+            isExternalKeyboard = device?.isExternal == true &&
+                device.supportsSource(InputDevice.SOURCE_KEYBOARD),
+            hasInputConnection = currentInputStarted && currentInputConnection != null
+        ) {
+            // 识别/润色期间忽略额外按键，不复用麦克风点击的「强制取消」行为。
+            when (actionHandler.getCurrentState()) {
+                KeyboardState.Idle -> if (checkAsrReady()) actionHandler.handleMicTapToggle()
+                is KeyboardState.Listening -> actionHandler.handleMicTapToggle()
+                else -> Unit
+            }
+        }
     }
 
     /**
@@ -533,6 +562,10 @@ class AsrKeyboardService :
     }
 
     override fun onFinishInput() {
+        hardwareVoiceShortcut.reset()
+        // 外接键盘可在输入视图未显示时录音，此时不会收到 onFinishInputView。
+        stopImeRecordingIfRunning()
+        actionHandler.onInputViewHidden()
         actionHandler.onInputConnectionReset("finish_input")
         super.onFinishInput()
     }

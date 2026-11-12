@@ -284,6 +284,27 @@ class Prefs(context: Context) {
         get() = sp.getBoolean(KEY_MIC_TAP_TOGGLE_ENABLED, false)
         set(value) = sp.edit { putBoolean(KEY_MIC_TAP_TOGGLE_ENABLED, value) }
 
+    // 外接键盘快捷键；keyCode 与 scanCode 均为 0 表示尚未绑定。
+    var hardwareVoiceKeyCode: Int
+        get() = sp.getInt(KEY_HARDWARE_VOICE_KEY_CODE, 0)
+        set(value) = sp.edit { putInt(KEY_HARDWARE_VOICE_KEY_CODE, value.coerceAtLeast(0)) }
+
+    var hardwareVoiceScanCode: Int
+        get() = sp.getInt(KEY_HARDWARE_VOICE_SCAN_CODE, 0)
+        set(value) = sp.edit { putInt(KEY_HARDWARE_VOICE_SCAN_CODE, value.coerceAtLeast(0)) }
+
+    var hardwareVoiceMetaState: Int
+        get() = sp.getInt(KEY_HARDWARE_VOICE_META_STATE, 0)
+        set(value) = sp.edit { putInt(KEY_HARDWARE_VOICE_META_STATE, value) }
+
+    fun setHardwareVoiceShortcut(keyCode: Int, scanCode: Int, metaState: Int) {
+        sp.edit {
+            putInt(KEY_HARDWARE_VOICE_KEY_CODE, keyCode.coerceAtLeast(0))
+            putInt(KEY_HARDWARE_VOICE_SCAN_CODE, scanCode.coerceAtLeast(0))
+            putInt(KEY_HARDWARE_VOICE_META_STATE, metaState)
+        }
+    }
+
     // 启动键盘面板时自动开始录音（默认关闭）
     var autoStartRecordingOnShow: Boolean
         get() = sp.getBoolean(KEY_AUTO_START_RECORDING_ON_SHOW, false)
